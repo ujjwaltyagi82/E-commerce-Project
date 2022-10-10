@@ -6,7 +6,8 @@ const bcrypt = require("bcrypt")
 
 const creatUser = async function (req, res) {
     try {
-        const data = JSON.parse(req.body.data)
+        const data = req.body
+           
         const password = data.password
         const profileImage = req.files
         const uploadedImage = await uploadFile(profileImage[0])
@@ -17,11 +18,11 @@ const creatUser = async function (req, res) {
         const register = await userModel.create(data)
 
 
-        res.status(201).send({ msg: "User created successfully", data: register })
+        return res.status(201).send({ msg: "User created successfully", data: register })
 
     }
     catch (err) {
-        res.status(500).send({ msg: err })
+        return res.status(500).send({ msg: err })
     }
 
 }

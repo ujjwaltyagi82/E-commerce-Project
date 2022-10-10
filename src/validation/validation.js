@@ -1,3 +1,5 @@
+const userModel=require("../Model/userModel")
+
 // Validataion for empty request body
 const checkBody = function (value) {
     if (Object.keys(value).length === 0) return false;
@@ -49,9 +51,9 @@ const checkBody = function (value) {
   //======================================User registration validation====================================================
   const registerValidtion = async function(req,res,next){
       try {
-          const data = JSON.parse(req.body.data)
-          const { fname, lname, email, phone, password, address } = data
-          const profileImage = req.files
+          let data = req.body
+          let { fname, lname, email, phone, password, address } = data
+          let profileImage = req.files
   
           if (profileImage.length === 0) {
               return res.status(400).send({ status: false, message: "Please Upload the Profile Image" })
@@ -151,3 +153,6 @@ const checkBody = function (value) {
   }
   next()
   }
+
+
+  module.exports={registerValidtion,}
