@@ -108,12 +108,18 @@ const profileUpdate = async function (req, res) {
   try {
     let userId = req.params.userId
     let data = req.body
-    let { fname, lname, email, profileImage, phone, password, address } = data
-    let files = req.files
-    let uploadedImage = await uploadFile(files[0])
+    let profileImage=req.files
+    let { password } = data
+    
     if (password)
       data.password = await bcrypt.hash(password, 10)
-    data.profileImage = uploadedImage
+
+    if (profileImage && profileImage.length > 0) {
+
+        let uploadFileURL = await uploadFile(profileImage[0]);
+        data.profileImage = uploadFileURL;
+      }
+
 
     let updateData = await userModel.findOneAndUpdate({ _id: userId }, data, { new: true })
 
