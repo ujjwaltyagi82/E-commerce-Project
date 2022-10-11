@@ -1,6 +1,7 @@
 const userModel = require("../Model/userModel")
 const { uploadFile } = require("../controller/aws")
 const bcrypt = require("bcrypt")
+const jwt = require('jsonwebtoken')
 
 
 
@@ -28,25 +29,24 @@ const creatUser = async function (req, res) {
 };
 const loginUser = async function (req, res) {
     try {
-      data = req.body;
-      let userName = data.email;
-      let myPassword = data.password;
+      email=req.body.email
+      myPassword=req.body.password
        
       //if give nothing inside req.body
-      if (Object.keys(data).length == 0) {
-        return res.status(400).send({
-          status: false,
-          message: "Please provide email & password to login.",
-        });
-      }
-      if (Object.keys(data).length > 2) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Only email & password is required." });
-      }
+    //   if (Object.keys(data).length == 0) {
+    //     return res.status(400).send({
+    //       status: false,
+    //       message: "Please provide email & password to login.",
+    //     });
+    //   }
+    //   if (Object.keys(data).length > 2) {
+    //     return res
+    //       .status(400)
+    //       .send({ status: false, message: "Only email & password is required." });
+    //   }
       //---------------------------------------------//
       //if no Email inside req.
-      if (!userName) {
+      if (!email) {
         return res
           .status(400)
           .send({ status: false, message: "please provide an Email !" });
@@ -59,11 +59,18 @@ const loginUser = async function (req, res) {
       }
     //   let bcrypt = await bcrypt.compareSynce(myPassword,pass.password)
       //-------------------------------------//
+      let user = await userModel.findOne({ email: email });
+
+      let checkPass = await bcrypt.compareSync(myPassword, user.password)
+      console.log(checkPass)
+      if(!checkPass){
+        return res.status(400).send({status:false,message:"bcrypted password is invalid"})
+      }
   
       //if not user
-      let user = await userModel.findOne({ email: userName,password: myPassword });
+      
 
-      if(!user.email || !user.password){
+      if(!user){
         return res
           .status(400)
           .send({ status: false, message: "username or Password is not corerct" })
@@ -80,10 +87,7 @@ const loginUser = async function (req, res) {
     //       .status(400)
     //       .send({ status: false, message: "password is not corerct" });
     //   }
-      let bcrypt = await bcrypt.compareSync(myPassword,pass.password)
-      if(!bcrypt){
-        return res.status(400).send({status:falsr,message:"bcrypted password is invalid"})
-      }
+    
       //---------------------//
       //success creation starting
   
@@ -101,10 +105,20 @@ const loginUser = async function (req, res) {
           userId:user._id.toString(),
           
         }
+      res.setHeader("Authorization", token);
       res.status(200).send({ status: true, message: "Success", data: Token });
     } catch (err) {
-      res.status(500).send({ message: "server error", error: err });
+      res.status(500).send({ message: "server error", error: err.message });
     }
   };
-module.exports = { creatUser,loginUser}
+
+  const getUser = async function(req,res){
+    const userId=req.params.userId
+    const user = await userModel.findById(userId)
+    if(!user)
+    return res.status(400).send({status:false, message:"User not Found"})
+
+    return res.status(200).send({status:false, message:"Success", data:user})
+  }
+module.exports = { creatUser,loginUser,getUser}
 
