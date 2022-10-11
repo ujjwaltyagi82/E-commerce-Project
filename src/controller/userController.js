@@ -47,21 +47,15 @@ const loginUser = async function (req, res) {
         .send({ status: false, message: "please enter password !" });
     }
 
-    let user = await userModel.findOne({ email: email });
-
-    let checkPass = await bcrypt.compareSync(myPassword, user.password)
-    console.log(checkPass)
-    if (!checkPass) {
-      return res.status(400).send({ status: false, message: "bcrypted password is invalid" })
-    }
-
-
-
+    let user = await userModel.findOne({ email: email })
 
     if (!user) {
-      return res
-        .status(400)
-        .send({ status: false, message: "username or Password is not corerct" })
+      return res.status(400).send({ status: false, message: "username or Password is not corerct" })
+    } 
+
+    let checkPass = await bcrypt.compare(myPassword, user.password)
+    if (!checkPass) {
+      return res.status(400).send({ status: false, message: "bcrypted password is invalid" })
     }
 
 

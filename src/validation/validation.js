@@ -47,6 +47,17 @@ function isValidImage(value) {
   return result;
 }
 
+const pinValid = (value) => {
+  let pinregex = /^\d{6}$/;
+  if (pinregex.test(value))
+      return true;
+}
+
+const addressValid = (value) => {
+  let streetRegex = /^[#.0-9a-zA-Z\s,-]+$/;
+  if (streetRegex.test(value))
+      return true;
+}
 
 //======================================User registration validation====================================================
 const registerValidtion = async function (req, res, next) {
@@ -108,54 +119,87 @@ const registerValidtion = async function (req, res, next) {
       return res.status(400).send({ status: false, message: "Please enter valid password  and length should be 8 to 15" })
     }
 
-    if (!address) {
-      return res.status(400).send({ status: false, message: "Address is Mandatory" })
-    }
+    if (req.body.address) {
+      req.body.address = JSON.parse(address)
+      let { shipping, billing } = req.body.address
 
-    if (!address.shipping) {
-      return res.status(400).send({ status: false, message: "Please enter shipping address" })
-    }
+      // validation for Shipping address
+      if (!shipping)
+          return res.status(400).send({ status: false, message: "Please enter shipping address" });
+      if (shipping.street) {    // validation for street
+          shipping.street = shipping.street.trim();
+          if (!isValidBody(shipping.street))
+              return res.status(400).send({ status: false, message: "Shipping street name must be present" });
+          if (!addressValid(shipping.street))
+              return res.status(400).send({ status: false, message: "Please enter valid shipping street name" });
+      } else {
+          return res.status(400).send({ status: false, message: "Shipping Street name is required" })
+      }
 
-    if (!isValidBody(address.shipping.street)) {
-      return res.status(400).send({
-        status: false, message: "Please enter street in shipping address"
-      })
-    }
-    if (!isValidBody(address.shipping.city)) {
-      return res.status(400).send({ status: false, message: "Please enter city in shipping address" })
-    }
-    if (!lengthOfCharacter(address.shipping.city)) {
-      return res.status(400).send({ status: false, message: "Please enter valid city in shipping address" })
-    }
-    if (!/^\d{6}$/.test(address.shipping.pincode)) {
-      return res.status(400).send({ status: false, message: "Please enter valid pincode in shipping address" })
-    }
+      if (shipping.city) {    // validation for city
+          shipping.city = shipping.city.trim();
+          if (!isValidBody(shipping.city))
+              return res.status(400).send({ status: false, message: "Shipping city name must be present" });
+          if (!lengthOfCharacter(shipping.city))
+              return res.status(400).send({ status: false, message: "Please enter valid shipping city name" });
+      } else {
+          return res.status(400).send({ status: false, message: "Shipping  City name is required" })
+      }
 
-    if (!address.billing) {
-      return res.status(400).send({ status: false, message: "Please enter billing address" })
-    }
+      if (shipping.pincode) {    // validation for pincode
+          if (!isValidBody(shipping.pincode))
+              return res.status(400).send({ status: false, message: "Shipping pincode must be present" });
+          if (!pinValid(shipping.pincode))
+              return res.status(400).send({ status: false, message: "Shipping pincode is not valid" });
+      } else {
+          return res.status(400).send({ status: false, message: "Shipping  Pincode is required" })
+      }
 
-    if (!isValidBody(address.billing.street)) {
-      return res.status(400).send({ status: false, message: "Please enter street in billing address" })
-    }
-    if (!isValidBody(address.billing.city)) {
-      return res.status(400).send({
-        status: false, message: "Please enter city in billing address"
-      })
-    }
-    if (!lengthOfCharacter(address.billing.city)) {
-      return res.status(400).send({ status: false, message: "Please enter valid city in billing address" })
-    }
-    if (!/^\d{6}$/.test(address.billing.pincode)) {
-      return res.status(400).send({ status: false, message: "Please enter valid pincode in billing address" })
-    }
+
+      // validation for Billing address
+      if (!billing)
+          return res.status(400).send({ status: false, message: "Please enter billing address" });
+      if (billing.street) {    // validation for street
+          billing.street = billing.street.trim();
+          if (!isValidBody(billing.street))
+              return res.status(400).send({ status: false, message: "Billing street name must be present" });
+          if (!addressValid(billing.street))
+              return res.status(400).send({ status: false, message: "Please enter valid billing street name" });
+      } else {
+          return res.status(400).send({ status: false, message: "Billing Street name is required" })
+      }
+
+      if (billing.city) {    // validation for city
+          billing.city = billing.city.trim();
+          if (!isValidBody(billing.city))
+              return res.status(400).send({ status: false, message: "Billing city name must be present" });
+          if (!lengthOfCharacter(billing.city))
+              return res.status(400).send({ status: false, message: "Please enter valid billing city name" });
+      } else {
+          return res.status(400).send({ status: false, message: "Billing city name is required" })
+      }
+
+      if (billing.pincode) {    // validation for pincode
+          if (!isValidBody(billing.pincode))
+              return res.status(400).send({ status: false, message: "Billing pincode must be present" });
+          if (!pinValid(billing.pincode))
+              return res.status(400).send({ status: false, message: "Billing pincode is not valid" });
+      } else {
+          return res.status(400).send({ status: false, message: "Billing pincode is required" })
+      }
+
+  } else {
+      return res.status(400).send({ status: false, message: "Please enter address" })
+  }
 
   } catch (err) {
-    res.status(500).send({ status: false, message: err.message })
+    return res.status(500).send({ status: false, message: err.message })
   }
   next()
 }
-const updateUser = async function (req, res) {
+
+//==========================================update validation=============================================================================
+const updateUser = async function (req, res, next) {
   try {
     let data = req.body
     let { fname, lname, email, phone, password, address } = data
@@ -255,15 +299,15 @@ const updateUser = async function (req, res) {
         status: false, message: "Please enter city in billing address"
       })
     }
-    if (!lengthOfCharacter(address.billing.city)) {
+    if (!lengthOfCharacter(billing.city)) {
       return res.status(400).send({ status: false, message: "Please enter valid city in billing address" })
     }
-    if (!/^\d{6}$/.test(address.billing.pincode)) {
+    if (!/^\d{6}$/.test(billing.pincode)) {
       return res.status(400).send({ status: false, message: "Please enter valid pincode in billing address" })
     }
   }
   catch (err) {
-    res.status(500).send({ status: false, message: err.message })
+   return res.status(500).send({ status: false, message: err.message })
   }
 next()
 }
