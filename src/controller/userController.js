@@ -109,7 +109,7 @@ const profileUpdate = async function (req, res) {
     let userId = req.params.userId
     let data = req.body
     let profileImage=req.files
-    let { password } = data
+    let { fname, lname, email, phone, password, address } = data
     
     if (password)
       data.password = await bcrypt.hash(password, 10)
