@@ -20,7 +20,8 @@ const authentication = async function (req, res, next) {
         next()
     }
     catch (err) {
-        if (err.name === "JsonWebTokenError") {
+        if (err.name === "JsonWebTokenError" || err.message==="jwt expired") {
+            //console.log(err)
             res.status(401).send({  status: false, msg: err.message });
           } else return res.status(500).send({  status: false, msg: err.message });
     }

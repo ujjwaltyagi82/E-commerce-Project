@@ -156,3 +156,54 @@ const checkBody = function (value) {
 
 
   module.exports={registerValidtion,}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //// validating address
+  // const {shipping,billing}=req.body["address"]
+  // if(!validator.isValidObject(address)){
+  //     return res.status(400).send({status:false, message:"address can only be object type"})
+  // }
+
+  // let nestObj=["street","pincode","city"]
+  // for(let key of nestObj){
+  //     if(!validator.isValid(shipping[key])){
+  //         return res.status(400).send({status:false, message:`${key} must be present in shipping field`})
+  //     }
+  //     if(!validator.isValid(billing[key])){
+  //         return res.status(400).send({status:false, message:`${key} must be present in billing field`})
+  //     }
+  // }
+
+  // // validating field present in billing and shipping fields
+  // if(!validator.isLetters(shipping["city"]) || !validator.isLetters(billing["city"])){
+  //     return res.status(400).send({status:false, message:"city can contains letters / String type only"})
+  // }
+  // if(!validator.isValid(shipping["street"]) || !validator.isValid(billing["street"])){
+  //     return res.status(400).send({status:false, message:"street can be String type only"})
+  // }
+  // if(!validator.isValidPincode(shipping["pincode"]) || !validator.isValidPincode(billing["pincode"])){
+  //     return res.status(400).send({status:false, message:"Invalid pincode"})
+  // }
+
+  // // Check for uniqueness for email and phone
+  // const existedData = await userModel.find({$or:[{email},{phone}]})
+  // for(let key of existedData){
+  //     if(key["email"]==email.trim().toLowerCase()){
+  //         return res.status(400).send({status:false, message:"Email is already taken"})
+  //     }
+  //     if(key["phone"]==phone.trim()){
+  //         return res.status(400).send({status:false, message:"phone is already taken"})
+  //     }
+
+  // }
