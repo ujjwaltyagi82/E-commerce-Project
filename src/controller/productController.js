@@ -9,16 +9,30 @@ const creatProduct = async function (req, res) {
       const uploadedImage = await uploadFile(productImage[0])
       data.productImage = uploadedImage
 
+      let {availableSizes} =data
+      availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
+      if(!availableSizes.every((e)=>["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+      return res.status(400).send({status:false, message: "Invalid Available Sizes" })
+      // console.log(availableSizes);
+      data.availableSizes = availableSizes
+      // if(!availableSizes.every((e)=>["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+      // return res.status(400).send({status:false, message: "Invalid Available Sizes" })
+      
+      // data.availableSizes = JSON.parse(availableSizes)
+      
+
       const product = await productModel.create(data)
   
       return res.status(201).send({ msg: "product created successfully", data: product })
   
     }
     catch (err) {
-      return res.status(500).send({ msg: err })
+      return res.status(500).send({status:false, message: err.message })
     }
   
-  };
+  }
+
+
 
 
   const getProductById = async function (req, res) {
@@ -50,7 +64,7 @@ const creatProduct = async function (req, res) {
     if(productDeleted){
       return res.status(200).send({status:true, message:'Product Deleted successfully'})
     }
-    return res.status(404).send({status:false, message:'Product Not Found !'})
+    return res.status(404).send({status:false, message:'Product Not Found or Deleted !'})
   }
 
 
