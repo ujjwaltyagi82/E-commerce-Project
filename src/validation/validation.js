@@ -267,7 +267,7 @@ const updateUser = async function (req, res, next) {
       data.address = JSON.parse(address);
     }
     if (!isValidBody(data.address)) {
-      return res.status(400).send({ status: true, message: "Please enter a valid address" })
+      return res.status(400).send({ status: false, message: "Please enter a valid address" })
     }
     if (typeof data.address != "object") {
       return res.status(400).send({ status: false, message: "Address must be present in object" })
@@ -281,7 +281,7 @@ const updateUser = async function (req, res, next) {
       return res.status(400).send({ status: false, message: "Shipping address must be A object" })
     }
     if (!isValidBody(shipping.street)) {
-      return res.status(400).send({ status: false, message: "Please enter a valid city" })
+      return res.status(400).send({ status: false, message: "Please enter a valid street" })
     }
     if (!lengthOfCharacter(shipping.city)) {
       return res.status(400).send({ status: false, message: "Please enter valid city in shipping address" })
