@@ -40,8 +40,21 @@ const creatProduct = async function (req, res) {
   
   }
 
+  const deleteProductById = async function(req,res){
+    const productId = req.params.productId
 
-  module.exports={creatProduct,getProductById}
+    if(!(productId.match(/^[0-9a-fA-F]{24}$/)))
+    return res.status(400).send({status:false,message:"Invalid productId given"})
+    
+    let productDeleted = await productModel.findOneAndUpdate({ _id: productId, isDeleted:false},{$set:{isDeleted:true, deletedAt: Date.now()}},{new:true})
+    if(productDeleted){
+      return res.status(200).send({status:true, message:'Product Deleted successfully'})
+    }
+    return res.status(404).send({status:false, message:'Product Not Found !'})
+  }
+
+
+  module.exports={creatProduct, getProductById, deleteProductById}
 
   
   
