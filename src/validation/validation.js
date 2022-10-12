@@ -319,4 +319,4 @@ const updateUser = async function (req, res, next) {
 next()
 }
 
-module.exports = { registerValidtion, updateUser}
+module.exports = { registerValidtion, updateUser , lengthOfCharacter}
