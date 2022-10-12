@@ -84,6 +84,10 @@ const loginUser = async function (req, res) {
 const getUser = async function (req, res) {
   try {
     const userId = req.params.userId
+
+    if(!(userId.match(/^[0-9a-fA-F]{24}$/)))
+      return res.status(400).send({status:false,message:"Invalid userId given"})
+    
     const user = await userModel.findById(userId)
     if (!user)
       return res.status(400).send({ status: false, message: "User not Found" })
@@ -118,10 +122,10 @@ const profileUpdate = async function (req, res) {
 
   
 
-    let updateData = await userModel.findOneAndUpdate({ _id: userId }, data, { new: true })
+    let updatedData = await userModel.findOneAndUpdate({ _id: userId }, data, { new: true })
 
 
-    return res.status(200).send({ status: true, message: "updated sucessfully", data: updateData })
+    return res.status(200).send({ status: true, message: "updated sucessfully", data: updatedData })
   }
   catch (err) {
     res.status(500).send({ message: "server error", error: err.message });

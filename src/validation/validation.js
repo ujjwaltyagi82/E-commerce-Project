@@ -204,9 +204,13 @@ const registerValidtion = async function (req, res, next) {
 //==========================================update validation=============================================================================
 const updateUser = async function (req, res, next) {
   try {
+    let userId = req.params.userId
     let data = req.body
     let { fname, lname, email, phone, password, address } = data
     let profileImage = req.files
+
+    if(!(userId.match(/^[0-9a-fA-F]{24}$/)))
+      return res.status(400).send({status:false,message:"Invalid userId given"})
 
 
     if (!checkBody(data) && !profileImage) {
@@ -282,7 +286,7 @@ const updateUser = async function (req, res, next) {
     if (!lengthOfCharacter(shipping.city)) {
       return res.status(400).send({ status: false, message: "Please enter valid city in shipping address" })
     }
-    if (!/^\d{6}$/.test(shipping.pincode)) {
+    if (!pinValid(shipping.pincode)) {
       return res.status(400).send({ status: false, message: "Please enter valid pincode in shipping address" })
     }
     //---------------------------------------------------------------
@@ -305,7 +309,7 @@ const updateUser = async function (req, res, next) {
     if (!lengthOfCharacter(billing.city)) {
       return res.status(400).send({ status: false, message: "Please enter valid city in billing address" })
     }
-    if (!/^\d{6}$/.test(billing.pincode)) {
+    if (!pinValid(billing.pincode)) {
       return res.status(400).send({ status: false, message: "Please enter valid pincode in billing address" })
     }
   }
