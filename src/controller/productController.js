@@ -3,7 +3,7 @@ const { uploadFile } = require("../controller/aws")
 const { isValidBody, inrRegex, useRegex } = require('../validation/validation.js')
 
 
-
+//====================createProduct==========================================================
 const createProduct = async function (req, res) {
   try {
     const data = req.body
@@ -15,30 +15,32 @@ const createProduct = async function (req, res) {
     }
 
     let { availableSizes, currencyId, currencyFormat } = data
+
     availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
+
     if (!availableSizes.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+
       return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
   
     data.availableSizes = availableSizes
 
     if(currencyId !=="INR"){
       if(!inrRegex(currencyId))
+
       return res.status(400).send({ status: false, message: "CurrencyId must be in INR" }) 
       data.currencyId=currencyId
     }
 
     if(currencyFormat !=="₹"){
       if(!useRegex(currencyFormat))
+
       return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" }) 
       data.currencyFormat=currencyFormat
     }
 
-   
-
-
     const product = await productModel.create(data)
 
-    return res.status(201).send({ msg: "product created successfully", data: product })
+    return res.status(201).send({status: true, msg: "product created successfully", data: product })
 
   }
   catch (err) {
@@ -46,6 +48,8 @@ const createProduct = async function (req, res) {
   }
 
 }
+
+//==========================================getProductByQuery==============================================
 
 const getbyquery = async function (req, res) {
   try {
@@ -124,7 +128,7 @@ const getbyquery = async function (req, res) {
 
 }
 
-
+//==================================getProductById============================================
 const getProductById = async function (req, res) {
   try {
     const productId = req.params.productId
@@ -144,6 +148,7 @@ const getProductById = async function (req, res) {
 
 }
 
+//===========================================updateProduct===========================================
 const updateProduct = async function(req, res){
   try{const productId = req.params.productId
   const data = req.body
@@ -187,6 +192,8 @@ const updateProduct = async function(req, res){
       return res.status(500).send({status:false, message:err.message})
      }
 }
+
+//=========================================deleteProductById============================================
 
 const deleteProductById = async function (req, res) {
   const productId = req.params.productId

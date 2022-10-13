@@ -11,19 +11,21 @@ const createUser = async function (req, res) {
 
     const password = data.password
     const profileImage = req.files
+
     const uploadedImage = await uploadFile(profileImage[0])
     const cypt = await bcrypt.hash(password, 10)
+    
     data.profileImage = uploadedImage
     data.password = cypt
 
     const register = await userModel.create(data)
 
 
-    return res.status(201).send({ msg: "User created successfully", data: register })
+    return res.status(201).send({status:true, message: "User created successfully", data: register })
 
   }
   catch (err) {
-    return res.status(500).send({ msg: err })
+    return res.status(500).send({status:false, message: err.message })
   }
 
 };
@@ -69,14 +71,14 @@ const loginUser = async function (req, res) {
       { expiresIn: "2h" }
     );
     let Token = {
-      token: token,
       userId: user._id.toString(),
-
-    }
+      token: token
+     }
     res.setHeader("Authorization", token);
     res.status(200).send({ status: true, message: "Success", data: Token });
-  } catch (err) {
-    res.status(500).send({ message: "server error", error: err.message });
+  } 
+  catch (err) {
+   return res.status(500).send({ message: "server error", error: err.message });
   }
 };
 
@@ -86,16 +88,16 @@ const getUser = async function (req, res) {
     const userId = req.params.userId
 
     if(!(userId.match(/^[0-9a-fA-F]{24}$/)))
-      return res.status(400).send({status:false,message:"Invalid userId given"})
+      return res.status(400).send({status:false, message:"Invalid userId given"})
     
     const user = await userModel.findById(userId)
     if (!user)
       return res.status(400).send({ status: false, message: "User not Found" })
 
-    return res.status(200).send({ status: false, message: "Success", data: user })
+      return res.status(200).send({ status: true, message: "Success", data: user })
   }
   catch (err) {
-    res.status(500).send({ message: "server error", error: err.message });
+    res.status(500).send({status:false, message: "server error", error: err.message });
   }
 
 }
@@ -107,7 +109,7 @@ const profileUpdate = async function (req, res) {
     let userId = req.params.userId
     let data = req.body
     let profileImage=req.files
-//-------------------------------------------------------------------------------------------------------------
+
     let {  password } = data
     
     if (password)
@@ -118,17 +120,13 @@ const profileUpdate = async function (req, res) {
         let uploadFileURL = await uploadFile(profileImage[0]);
         data.profileImage = uploadFileURL;
       }
-//----------------------------------------------------------------------------------------------------------------------------
-
-  
 
     let updatedData = await userModel.findOneAndUpdate({ _id: userId }, data, { new: true })
 
-
-    return res.status(200).send({ status: true, message: "updated sucessfully", data: updatedData })
+      return res.status(200).send({ status: true, message: "updated sucessfully", data: updatedData })
   }
   catch (err) {
-    res.status(500).send({ message: "server error", error: err.message });
+      return res.status(500).send({status: false, message: "server error", error: err.message });
   }
 
 }
