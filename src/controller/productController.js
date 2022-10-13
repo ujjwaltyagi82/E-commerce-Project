@@ -198,8 +198,6 @@ const updateProduct = async function (req, res) {
         const uploadedImage = await uploadFile(productImage[0])
         data.productImage = uploadedImage
       }
-      else
-        return res.status(400).send({ status: true, message: 'Product image is required' })
 
         const update = await findOneAndUpdate({_id:productId } , data , {new : true})
         return res.status(400).send({status : true , message : "Product update succesfully"  , data:update})
