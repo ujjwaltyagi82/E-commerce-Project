@@ -59,6 +59,16 @@ const addressValid = (value) => {
       return true;
 }
 
+function inrRegex(input) {
+  let regex = /INR/;
+  return regex.test(input);
+}
+
+function useRegex(input) {
+  let regex = /₹/;
+  return regex.test(input);
+}
+
 //======================================User registration validation====================================================
 const registerValidtion = async function (req, res, next) {
   try {
@@ -319,4 +329,4 @@ const updateUser = async function (req, res, next) {
 next()
 }
 
-module.exports = { registerValidtion, updateUser , lengthOfCharacter}
+module.exports = { registerValidtion, updateUser , isValidBody, inrRegex, useRegex}

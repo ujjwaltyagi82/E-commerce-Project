@@ -1,24 +1,39 @@
 const productModel = require("../Model/productModel")
 const { uploadFile } = require("../controller/aws")
-const { lengthOfCharacter } = require('../validation/validation.js')
+const { isValidBody, inrRegex, useRegex } = require('../validation/validation.js')
+
+
 
 const createProduct = async function (req, res) {
   try {
     const data = req.body
+    
     const productImage = req.files
+    if(productImage && productImage.length > 0){
     const uploadedImage = await uploadFile(productImage[0])
     data.productImage = uploadedImage
+    }
 
-    let { availableSizes } = data
+    let { availableSizes, currencyId, currencyFormat } = data
     availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
     if (!availableSizes.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
       return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
-    // console.log(availableSizes);
+  
     data.availableSizes = availableSizes
-    // if(!availableSizes.every((e)=>["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
-    // return res.status(400).send({status:false, message: "Invalid Available Sizes" })
 
-    // data.availableSizes = JSON.parse(availableSizes)
+    if(currencyId !=="INR"){
+      if(!inrRegex(currencyId))
+      return res.status(400).send({ status: false, message: "CurrencyId must be in INR" }) 
+      data.currencyId=currencyId
+    }
+
+    if(currencyFormat !=="₹"){
+      if(!useRegex(currencyFormat))
+      return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" }) 
+      data.currencyFormat=currencyFormat
+    }
+
+   
 
 
     const product = await productModel.create(data)
@@ -52,16 +67,23 @@ const getbyquery = async function (req, res) {
 
       let condition = { isDeletd: false };
 
-      if (name) {
-        if (!lengthOfCharacter(name)) {
+      if (name !=null) {
+        if (!isValidBody(name)) {
           return res.status(400).send({ status: false, message: "enter a valid name" })
         }
         condition.title = { $regex: name, $options: "i" }
 
       }
 
-      if (priceGreaterthan) {
-        if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.match(priceGreaterthan)) {
+      if(size != null){
+        size = size.split(",").map((s) => s.trim().toUpperCase());
+        if (!size.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+      return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
+      condition.availableSizes= {$in: size}
+      }
+
+      if (priceGreaterthan !=null) {
+        if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(priceGreaterthan)) {
           return res
             .status(400)
             .send({ status: false, message: "Enter valid Greater price" });
@@ -69,8 +91,8 @@ const getbyquery = async function (req, res) {
         condition.price = { $gt: priceGreaterthan }
       }
 
-      if (priceLessthan) {
-        if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.match(priceLessthan)) {
+      if (priceLessthan !=null) {
+        if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(priceLessthan)) {
           return res.status(400).send({ status: false, message: "Enter a valid less price" })
         }
 
@@ -81,14 +103,14 @@ const getbyquery = async function (req, res) {
         condition["price"] = { $gt: priceGreaterthan, $lt: priceLessthan }
       }
 
-      if (priceSort) {
-        if (priceSort != 1 && priceSort != 1) {
+      if (priceSort != null) {
+        if (priceSort != 1 && priceSort != -1) {
           return res.status(400).send({ status: false, message: "Please use valid price sort" })
         }
       }
       let listproduct = await productModel.find(condition).sort({ price: priceSort })
 
-      if (!listproduct) {
+      if (!listproduct || listproduct.length==0) {
         return res.status(400).send({ status: false, message: "No any product find" })
       }
 
@@ -128,8 +150,8 @@ const updateProduct = async function(req, res){
   let {title, description, price, isFreeShipping, style, availableSizes, installments} = data
   const obj={isDeleted:false}
 
-  if(!ObjectId.isValid(productId))
-  return res.status(400).send({status:false, message:'Invalid productId'})
+  if (!(productId.match(/^[0-9a-fA-F]{24}$/)))
+    return res.status(400).send({ status: false, message: "Invalid productId given" })
 
   if(title || description || price || style || installments || isFreeShipping){
     
