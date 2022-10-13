@@ -51,13 +51,13 @@ function isValidImage(value) {
 const pinValid = (value) => {
   let pinregex = /^\d{6}$/;
   if (pinregex.test(value))
-      return true;
+    return true;
 }
 
 const addressValid = (value) => {
   let streetRegex = /^[#.0-9a-zA-Z\s,-]+$/;
   if (streetRegex.test(value))
-      return true;
+    return true;
 }
 
 function inrRegex(input) {
@@ -141,75 +141,75 @@ const registerValidtion = async function (req, res, next) {
 
       // validation for Shipping address
       if (!shipping)
-          return res.status(400).send({ status: false, message: "Please enter shipping address" });
+        return res.status(400).send({ status: false, message: "Please enter shipping address" });
       if (shipping.street) {    // validation for street
-          shipping.street = shipping.street.trim();
-          if (!isValidBody(shipping.street))
-              return res.status(400).send({ status: false, message: "Shipping street name must be present" });
-          if (!addressValid(shipping.street))
-              return res.status(400).send({ status: false, message: "Please enter valid shipping street name" });
+        shipping.street = shipping.street.trim();
+        if (!isValidBody(shipping.street))
+          return res.status(400).send({ status: false, message: "Shipping street name must be present" });
+        if (!addressValid(shipping.street))
+          return res.status(400).send({ status: false, message: "Please enter valid shipping street name" });
       } else {
-          return res.status(400).send({ status: false, message: "Shipping Street name is required" })
+        return res.status(400).send({ status: false, message: "Shipping Street name is required" })
       }
 
       if (shipping.city) {    // validation for city
-          shipping.city = shipping.city.trim();
-          if (!isValidBody(shipping.city))
-              return res.status(400).send({ status: false, message: "Shipping city name must be present" });
-          if (!lengthOfCharacter(shipping.city))
-              return res.status(400).send({ status: false, message: "Please enter valid shipping city name" });
+        shipping.city = shipping.city.trim();
+        if (!isValidBody(shipping.city))
+          return res.status(400).send({ status: false, message: "Shipping city name must be present" });
+        if (!lengthOfCharacter(shipping.city))
+          return res.status(400).send({ status: false, message: "Please enter valid shipping city name" });
       } else {
-          return res.status(400).send({ status: false, message: "Shipping  City name is required" })
-       }
+        return res.status(400).send({ status: false, message: "Shipping  City name is required" })
+      }
 
-       // validation for pincode
-      if (shipping.pincode) {   
-          if (!isValidBody(shipping.pincode))
-              return res.status(400).send({ status: false, message: "Shipping pincode must be present" });
-          if (!pinValid(shipping.pincode))
-              return res.status(400).send({ status: false, message: "Shipping pincode is not valid" });
+      // validation for pincode
+      if (shipping.pincode) {
+        if (!isValidBody(shipping.pincode))
+          return res.status(400).send({ status: false, message: "Shipping pincode must be present" });
+        if (!pinValid(shipping.pincode))
+          return res.status(400).send({ status: false, message: "Shipping pincode is not valid" });
       } else {
-          return res.status(400).send({ status: false, message: "Shipping  Pincode is required" })
+        return res.status(400).send({ status: false, message: "Shipping  Pincode is required" })
       }
 
 
       // validation for Billing address
       if (!billing)
-          return res.status(400).send({ status: false, message: "Please enter billing address" });
+        return res.status(400).send({ status: false, message: "Please enter billing address" });
       if (billing.street) {    // validation for street
-          billing.street = billing.street.trim();
-          if (!isValidBody(billing.street))
-              return res.status(400).send({ status: false, message: "Billing street name must be present" });
-          if (!addressValid(billing.street))
-              return res.status(400).send({ status: false, message: "Please enter valid billing street name" });
+        billing.street = billing.street.trim();
+        if (!isValidBody(billing.street))
+          return res.status(400).send({ status: false, message: "Billing street name must be present" });
+        if (!addressValid(billing.street))
+          return res.status(400).send({ status: false, message: "Please enter valid billing street name" });
       } else {
-          return res.status(400).send({ status: false, message: "Billing Street name is required" })
+        return res.status(400).send({ status: false, message: "Billing Street name is required" })
       }
 
       // validation for city
-      if (billing.city) {    
-          billing.city = billing.city.trim();
-          if (!isValidBody(billing.city))
-              return res.status(400).send({ status: false, message: "Billing city name must be present" });
-          if (!lengthOfCharacter(billing.city))
-              return res.status(400).send({ status: false, message: "Please enter valid billing city name" });
+      if (billing.city) {
+        billing.city = billing.city.trim();
+        if (!isValidBody(billing.city))
+          return res.status(400).send({ status: false, message: "Billing city name must be present" });
+        if (!lengthOfCharacter(billing.city))
+          return res.status(400).send({ status: false, message: "Please enter valid billing city name" });
       } else {
-          return res.status(400).send({ status: false, message: "Billing city name is required" })
+        return res.status(400).send({ status: false, message: "Billing city name is required" })
       }
 
       // validation for city
-      if (billing.pincode) {    
-          if (!isValidBody(billing.pincode))
-              return res.status(400).send({ status: false, message: "Billing pincode must be present" });
-          if (!pinValid(billing.pincode))
-              return res.status(400).send({ status: false, message: "Billing pincode is not valid" });
+      if (billing.pincode) {
+        if (!isValidBody(billing.pincode))
+          return res.status(400).send({ status: false, message: "Billing pincode must be present" });
+        if (!pinValid(billing.pincode))
+          return res.status(400).send({ status: false, message: "Billing pincode is not valid" });
       } else {
-          return res.status(400).send({ status: false, message: "Billing pincode is required" })
+        return res.status(400).send({ status: false, message: "Billing pincode is required" })
       }
 
-  } else {
+    } else {
       return res.status(400).send({ status: false, message: "Please enter address" })
-  }
+    }
 
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message })
@@ -225,8 +225,8 @@ const updateUser = async function (req, res, next) {
     let { fname, lname, email, phone, password, address } = data
     let profileImage = req.files
 
-    if(!(userId.match(/^[0-9a-fA-F]{24}$/)))
-      return res.status(400).send({status:false,message:"Invalid userId given"})
+    if (!(userId.match(/^[0-9a-fA-F]{24}$/)))
+      return res.status(400).send({ status: false, message: "Invalid userId given" })
 
 
     if (!checkBody(data) && !profileImage) {
@@ -306,14 +306,14 @@ const updateUser = async function (req, res, next) {
       return res.status(400).send({ status: false, message: "Please enter valid pincode in shipping address" })
     }
     //---------------------------------------------------------------
-    if(!isValidBody(billing)){
-      return res.status(400).send({status : false , message : "Please enter a valid billing address"})
+    if (!isValidBody(billing)) {
+      return res.status(400).send({ status: false, message: "Please enter a valid billing address" })
     }
-   
-    if(typeof billing != "object"){
-    return res.status(400).send({status : false , message : "Please enter address in object"})
+
+    if (typeof billing != "object") {
+      return res.status(400).send({ status: false, message: "Please enter address in object" })
     }
-   
+
     if (!isValidBody(billing.street)) {
       return res.status(400).send({ status: false, message: "Please enter street in billing address" })
     }
@@ -330,72 +330,144 @@ const updateUser = async function (req, res, next) {
     }
   }
   catch (err) {
-   return res.status(500).send({ status: false, message: err.message })
+    return res.status(500).send({ status: false, message: err.message })
   }
-next()
+  next()
 }
 
 //==========================createProductValidtion=============================
 
-const productValidation = async function(req, res, next){
-try{  
+const productValidation = async function (req, res, next) {
+  try {
+    let data = req.body
+    let { availableSizes, currencyId, currencyFormat, title, description, style, price } = data
+
+    if (!isValidBody(title))
+      return res.status(400).send({ status: false, message: 'Title is required' })
+
+    if (await productModel.findOne({ title: title }))
+      return res.status(400).send({ status: false, message: 'Title must be unique' })
+
+    if (!isValidBody(description))
+      return res.status(400).send({ status: false, message: 'description is required' })
+
+    if (!lengthOfCharacter(description))
+      return res.status(400).send({ status: false, message: 'description must be in string' })
+
+    if (!lengthOfCharacter(style))
+      return res.status(400).send({ status: false, message: 'Style must be in string' })
+
+    if (!isValidBody(price))
+      return res.status(400).send({ status: false, message: 'price is required' })
+
+    if (!numRegex(price))
+      return res.status(400).send({ status: false, message: 'Price must be in number' })
+
+    availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
+
+    if (!availableSizes.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+      return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
+
+    data.availableSizes = availableSizes
+
+    if (currencyId !== "INR") {
+      if (!inrRegex(currencyId))
+        return res.status(400).send({ status: false, message: "CurrencyId must be in INR" })
+
+      data.currencyId = currencyId
+    }
+
+    if (currencyFormat !== "₹") {
+      if (!useRegex(currencyFormat))
+        return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" })
+
+      data.currencyFormat = currencyFormat
+    }
+
+  }
+  catch (err) {
+    return res.status(500).send({ status: false, message: err.message })
+  }
+
+  next()
+
+}
+const productUpdateValidation = async function (req, res, next) {
   let data = req.body
-  let { availableSizes, currencyId, currencyFormat,title, description, style, price } = data
 
-  if(!isValidBody(title))
-  return res.status(400).send({status:false, message:'Title is required'})
+  let { availableSizes, currencyId, currencyFormat, title, description, style, price } = data
+  if (title) {
+    if (!isValidBody(title))
+      return res.status(400).send({ status: false, message: 'title should not be empty' })
+  }
+  if (await productModel.findOne({ title: title }))
+    return res.status(400).send({ status: false, message: 'Title must be unique' })
 
-  if(await productModel.findOne({title:title}))
-  return res.status(400).send({status:false, message:'Title must be unique'})
+  if (description) {
+    if (!isValidBody(description))
+      return res.status(400).send({ status: false, message: 'description should not be empty' })
 
-  if(!isValidBody(description))
-  return res.status(400).send({status:false, message:'description is required'})
+  }
 
-  if(!lengthOfCharacter(description))
-  return res.status(400).send({status:false, message:'description must be in string'})
+  if (!lengthOfCharacter(description))
+    return res.status(400).send({ status: false, message: 'description must be in string' })
 
-  if(!lengthOfCharacter(style))
-  return res.status(400).send({status:false, message:'Style must be in string'})
+  if (style) {
+    if (!lengthOfCharacter(style))
+      return res.status(400).send({ status: false, message: 'Style must be in string' })
+  }
 
-  if(!isValidBody(price))
-  return res.status(400).send({status:false, message:'price is required'})
+  if (price) {
+    if (!numRegex(price))
+      return res.status(400).send({ status: false, message: 'Price must be in number' })
 
-  if(!numRegex(price))
-  return res.status(400).send({status:false, message:'Price must be in number'})
+
+  }
+
 
   availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
 
   if (!availableSizes.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
-  return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
-  
+    return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
   data.availableSizes = availableSizes
 
-  if(currencyId !=="INR"){
-    if(!inrRegex(currencyId))
-    return res.status(400).send({ status: false, message: "CurrencyId must be in INR" }) 
-    
-    data.currencyId=currencyId
+  if (currencyId !== "INR") {
+    if (!inrRegex(currencyId))
+      return res.status(400).send({ status: false, message: "CurrencyId must be in INR" })
+
+    data.currencyId = currencyId
   }
+  if (currencyFormat !== "₹") {
+    if (!useRegex(currencyFormat))
+      return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" })
 
-  if(currencyFormat !=="₹"){
-    if(!useRegex(currencyFormat))
-    return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" }) 
-    
-    data.currencyFormat=currencyFormat
+    data.currencyFormat = currencyFormat
   }
-
-}
-catch (err) {
-  return res.status(500).send({ status: false, message: err.message })
-}
-
-next()
-}
-
   
+  let productImage = req.files
+if(productImage){
+  if (productImage.length === 0) {
+    return res.status(400).send({ status: false, message: "Please Upload the Profile Image" })
+  }
+
+  if (!isValidImage(productImage[0].originalname)) {
+    return res.status(400).send({ status: false, message: "Please upload only image file with extension jpg, png, gif, jpeg" })
+  }
+
+}
 
 
 
 
 
-module.exports = { registerValidtion, updateUser , isValidBody, inrRegex, useRegex, productValidation}
+
+}
+
+
+
+
+
+
+
+
+module.exports = { registerValidtion, updateUser, isValidBody, inrRegex, useRegex, productValidation, }
