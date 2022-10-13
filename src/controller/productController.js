@@ -1,6 +1,6 @@
 const productModel = require("../Model/productModel")
 const { uploadFile } = require("../controller/aws")
-const { isValidBody, inrRegex, useRegex } = require('../validation/validation.js')
+const { isValidBody} = require('../validation/validation.js')
 
 
 //====================createProduct==========================================================
@@ -13,34 +13,12 @@ const createProduct = async function (req, res) {
     const uploadedImage = await uploadFile(productImage[0])
     data.productImage = uploadedImage
     }
-
-    let { availableSizes, currencyId, currencyFormat } = data
-
-    availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
-
-    if (!availableSizes.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
-
-      return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
-  
-    data.availableSizes = availableSizes
-
-    if(currencyId !=="INR"){
-      if(!inrRegex(currencyId))
-
-      return res.status(400).send({ status: false, message: "CurrencyId must be in INR" }) 
-      data.currencyId=currencyId
-    }
-
-    if(currencyFormat !=="₹"){
-      if(!useRegex(currencyFormat))
-
-      return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" }) 
-      data.currencyFormat=currencyFormat
-    }
-
+    else
+    return res.status(400).send({status:true, message:'Product image is required'})
+        
     const product = await productModel.create(data)
 
-    return res.status(201).send({status: true, msg: "product created successfully", data: product })
+    return res.status(201).send({status: true, message: "product created successfully", data: product })
 
   }
   catch (err) {
@@ -82,15 +60,13 @@ const getbyquery = async function (req, res) {
       if(size != null){
         size = size.split(",").map((s) => s.trim().toUpperCase());
         if (!size.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
-      return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
-      condition.availableSizes= {$in: size}
+        return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
+        condition.availableSizes= {$in: size}
       }
 
       if (priceGreaterthan !=null) {
         if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(priceGreaterthan)) {
-          return res
-            .status(400)
-            .send({ status: false, message: "Enter valid Greater price" });
+          return res.status(400).send({ status: false, message: "Enter valid Greater price" });
         }
         condition.price = { $gt: priceGreaterthan }
       }

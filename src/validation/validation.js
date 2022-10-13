@@ -1,3 +1,4 @@
+const productModel = require("../Model/productModel");
 const userModel = require("../Model/userModel")
 
 // Validataion for empty request body
@@ -66,6 +67,11 @@ function inrRegex(input) {
 
 function useRegex(input) {
   let regex = /₹/;
+  return regex.test(input);
+}
+
+function numRegex(input) {
+  let regex = /[0-9].[0-9]/;
   return regex.test(input);
 }
 
@@ -329,4 +335,67 @@ const updateUser = async function (req, res, next) {
 next()
 }
 
-module.exports = { registerValidtion, updateUser , isValidBody, inrRegex, useRegex}
+//==========================createProductValidtion=============================
+
+const productValidation = async function(req, res, next){
+try{  
+  let data = req.body
+  let { availableSizes, currencyId, currencyFormat,title, description, style, price } = data
+
+  if(!isValidBody(title))
+  return res.status(400).send({status:false, message:'Title is required'})
+
+  if(await productModel.findOne({title:title}))
+  return res.status(400).send({status:false, message:'Title must be unique'})
+
+  if(!isValidBody(description))
+  return res.status(400).send({status:false, message:'description is required'})
+
+  if(!lengthOfCharacter(description))
+  return res.status(400).send({status:false, message:'description must be in string'})
+
+  if(!lengthOfCharacter(style))
+  return res.status(400).send({status:false, message:'Style must be in string'})
+
+  if(!isValidBody(price))
+  return res.status(400).send({status:false, message:'price is required'})
+
+  if(!numRegex(price))
+  return res.status(400).send({status:false, message:'Price must be in number'})
+
+  availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase());
+
+  if (!availableSizes.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+  return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
+  
+  data.availableSizes = availableSizes
+
+  if(currencyId !=="INR"){
+    if(!inrRegex(currencyId))
+    return res.status(400).send({ status: false, message: "CurrencyId must be in INR" }) 
+    
+    data.currencyId=currencyId
+  }
+
+  if(currencyFormat !=="₹"){
+    if(!useRegex(currencyFormat))
+    return res.status(400).send({ status: false, message: "currencyFormat must be in ₹" }) 
+    
+    data.currencyFormat=currencyFormat
+  }
+
+}
+catch (err) {
+  return res.status(500).send({ status: false, message: err.message })
+}
+
+next()
+}
+
+  
+
+
+
+
+
+module.exports = { registerValidtion, updateUser , isValidBody, inrRegex, useRegex, productValidation}

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {registerValidtion,updateUser}= require("../validation/validation")
+const {registerValidtion,updateUser, productValidation}= require("../validation/validation")
 const {authentication, authorization} = require('../middleware/auth')
 
 const {createUser,loginUser,getUser,profileUpdate}=require("../controller/userController")
@@ -17,7 +17,7 @@ router.get('/user/:userId/profile', authentication, getUser)
 router.put("/user/:userId/profile", authentication, authorization,updateUser, profileUpdate)
 
 //====================Product Api=====================================
-router.post("/products",  createProduct)
+router.post("/products", productValidation, createProduct)
 
 router.get('/products', getbyquery)
 
