@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 
 //-------------------userRegisteration--------------
-const creatUser = async function (req, res) {
+const createUser = async function (req, res) {
   try {
     const data = req.body
 
@@ -135,5 +135,5 @@ const profileUpdate = async function (req, res) {
 
 
 
-module.exports = { creatUser, loginUser, getUser, profileUpdate }
+module.exports = { createUser, loginUser, getUser, profileUpdate }
 

@@ -2,7 +2,7 @@ const productModel = require("../Model/productModel")
 const { uploadFile } = require("../controller/aws")
 const { lengthOfCharacter } = require('../validation/validation.js')
 
-const creatProduct = async function (req, res) {
+const createProduct = async function (req, res) {
   try {
     const data = req.body
     const productImage = req.files
@@ -122,6 +122,50 @@ const getProductById = async function (req, res) {
 
 }
 
+const updateProduct = async function(req, res){
+  try{const productId = req.params.productId
+  const data = req.body
+  let {title, description, price, isFreeShipping, style, availableSizes, installments} = data
+  const obj={isDeleted:false}
+
+  if(!ObjectId.isValid(productId))
+  return res.status(400).send({status:false, message:'Invalid productId'})
+
+  if(title || description || price || style || installments || isFreeShipping){
+    
+    obj.title=title
+    obj.description=description
+    obj.price=price
+    obj.style=style
+    
+    obj.installments=installments
+    obj.isFreeShipping=isFreeShipping
+
+  }
+  if(availableSizes){
+    availableSizes = availableSizes.split(",").map((s) => s.trim().toUpperCase())
+    if(!availableSizes.every((e)=>["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+    return res.status(400).send({status:false, message: "Invalid Available Sizes" })
+    obj.availableSizes=availableSizes
+  }
+
+    const productImage = req.files
+    if (productImage && productImage.length > 0) {
+    const uploadedImage = await uploadFile(productImage[0])
+    obj.productImage = uploadedImage
+    }
+
+    const updateProductDetails = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false }, obj,{ new: true })
+
+    if(updateProductDetails){
+      return res.status(200).send({status: true, message: "Product successfully updated", data: updateProductDetails})
+    }
+     return res.status(404).send({ status: false, msg: "Product not found" }) 
+     }catch(err){
+      return res.status(500).send({status:false, message:err.message})
+     }
+}
+
 const deleteProductById = async function (req, res) {
   const productId = req.params.productId
 
@@ -136,7 +180,7 @@ const deleteProductById = async function (req, res) {
 }
 
 
-module.exports = { creatProduct, getProductById, deleteProductById }
+module.exports = { createProduct, getProductById, getbyquery, updateProduct, deleteProductById }
 
 
 
