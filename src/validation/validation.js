@@ -383,14 +383,14 @@ const productValidation = async function (req, res, next) {
 
       data.currencyFormat = currencyFormat
     }
-
+    next()
   }
   catch (err) {
     return res.status(500).send({ status: false, message: err.message })
   }
 
-  next()
+ 
 
 }
 
-module.exports = { registerValidtion,numRegex, updateUser, isValidBody, inrRegex, useRegex,}
+module.exports = { registerValidtion,numRegex, updateUser, isValidBody, inrRegex, useRegex, isValidImage, checkBody, productValidation}

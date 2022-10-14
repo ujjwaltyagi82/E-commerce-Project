@@ -1,7 +1,7 @@
 const productModel = require("../Model/productModel")
 const { uploadFile } = require("../controller/aws")
-const { isValidBody, numRegex, inrRegex, useRegex } = require('../validation/validation.js')
-const { findOneAndUpdate } = require("../Model/productModel")
+const { isValidBody, numRegex, inrRegex, useRegex, isValidImage,checkBody  } = require('../validation/validation.js')
+// const { findOneAndUpdate } = require("../Model/productModel")
 
 
 //====================createProduct==========================================================
@@ -130,16 +130,20 @@ const updateProduct = async function (req, res) {
   try {
     const productId = req.params.productId
     const data = req.body
+    let files = req.files;
 
+    if (!checkBody(data) && !files) {
+      return res.status(400).send({ status: false, message: "Please input Parameters" })
+    }
     if (!(productId.match(/^[0-9a-fA-F]{24}$/))) {
       return res.status(400).send({ status: false, message: "Please use a valid product id" })
     }
 
-    let checkdelete = await productModel.findOne({ _id: productId, isDeleted: false })
+    // let checkdelete = await productModel.findOne({ _id: productId, isDeleted: false })
 
-    if (!checkdelete) {
-      return res.status(400).send({ status: false, message: "No any product find" })
-    }
+    // if (!checkdelete) {
+    //   return res.status(400).send({ status: false, message: "No any product find" })
+    // }
     let { title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments } = data
 
     if (title) {
@@ -162,6 +166,7 @@ const updateProduct = async function (req, res) {
       if (!numRegex(price)) {
         return res.status(400).send({ status: false, message: "Use a valid price " })
       }
+    }
 
       if (style) {
         if (!isValidBody(style)) {
@@ -169,16 +174,18 @@ const updateProduct = async function (req, res) {
         }
       }
       if (availableSizes) {
-        size = availableSizes.split(",").map((s) => s.trim().toUpperCase());
+        let size = availableSizes.split(",").map((s) => s.trim().toUpperCase());
         if (!size.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
           return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
+          
+          data["availableSizes"] = size
       }
-      data["availableSizes"] = size
-    }
+    
     if (installments) {
       if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(installments)) {
         return res.status(400).send({ status: false, message: `Enter valid \Number` })
       }
+    }
 
       if (currencyId) {
         if (!inrRegex(currencyId)) {
@@ -192,16 +199,19 @@ const updateProduct = async function (req, res) {
         }
       }
       
-      const productImage = req.files
+      
+        if ((files && files.length > 0)) {
+            const productImage = await uploadFile(files[0])
+            data.productImage = productImage
+        }
 
-      if (productImage && productImage.length > 0) {
-        const uploadedImage = await uploadFile(productImage[0])
-        data.productImage = uploadedImage
-      }
 
-        const update = await findOneAndUpdate({_id:productId } , data , {new : true})
-        return res.status(400).send({status : true , message : "Product update succesfully"  , data:update})
-    }
+        const update = await productModel.findOneAndUpdate({_id:productId, isDeleted:false } , data , {new : true})
+        if(update){
+        return res.status(200).send({status : true , message : "Product update succesfully"  , data:update})
+        }
+        return res.status(400).send({status : false , message : "Product not found or deleted"})
+    
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message })
   }
