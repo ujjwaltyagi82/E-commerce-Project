@@ -1,6 +1,6 @@
 const productModel = require("../Model/productModel")
 const { uploadFile } = require("../controller/aws")
-const { isValidBody, numRegex, inrRegex, useRegex, isValidImage,checkBody  } = require('../validation/validation.js')
+const { isValidBody, numRegex, inrRegex, useRegex, isValidImage, checkBody } = require('../validation/validation.js')
 // const { findOneAndUpdate } = require("../Model/productModel")
 
 
@@ -168,50 +168,50 @@ const updateProduct = async function (req, res) {
       }
     }
 
-      if (style) {
-        if (!isValidBody(style)) {
-          return res.status(400).send({ status: false, message: "Enter a valid style" })
-        }
+    if (style) {
+      if (!isValidBody(style)) {
+        return res.status(400).send({ status: false, message: "Enter a valid style" })
       }
-      if (availableSizes) {
-        let size = availableSizes.split(",").map((s) => s.trim().toUpperCase());
-        if (!size.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
-          return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
-          
-          data["availableSizes"] = size
-      }
-    
+    }
+    if (availableSizes) {
+      let size = availableSizes.split(",").map((s) => s.trim().toUpperCase());
+      if (!size.every((e) => ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(e)))
+        return res.status(400).send({ status: false, message: "Invalid Available Sizes" })
+
+      data["availableSizes"] = size
+    }
+
     if (installments) {
       if (!/^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(installments)) {
         return res.status(400).send({ status: false, message: `Enter valid \Number` })
       }
     }
 
-      if (currencyId) {
-        if (!inrRegex(currencyId)) {
-          return res.status(400).send({ status: false, message: "Use only INR format" })
-        }
+    if (currencyId) {
+      if (!inrRegex(currencyId)) {
+        return res.status(400).send({ status: false, message: "Use only INR format" })
       }
+    }
 
-      if (currencyFormat) {
-        if (!useRegex(currencyFormat)) {
-          return res.status(400).send({ status: false, message: "Please use only ruppes format" })
-        }
+    if (currencyFormat) {
+      if (!useRegex(currencyFormat)) {
+        return res.status(400).send({ status: false, message: "Please use only ruppes format" })
       }
-      
-      
-        if ((files && files.length > 0)) {
-            const productImage = await uploadFile(files[0])
-            data.productImage = productImage
-        }
+    }
 
 
-        const update = await productModel.findOneAndUpdate({_id:productId, isDeleted:false } , data , {new : true})
-        if(update){
-        return res.status(200).send({status : true , message : "Product update succesfully"  , data:update})
-        }
-        return res.status(400).send({status : false , message : "Product not found or deleted"})
-    
+    if ((files && files.length > 0)) {
+      const productImage = await uploadFile(files[0])
+      data.productImage = productImage
+    }
+
+
+    const update = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false }, data, { new: true })
+    if (update) {
+      return res.status(200).send({ status: true, message: "Product update succesfully", data: update })
+    }
+    return res.status(400).send({ status: false, message: "Product not found or deleted" })
+
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message })
   }
