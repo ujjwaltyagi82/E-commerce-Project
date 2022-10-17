@@ -5,7 +5,7 @@ const {authentication, authorization} = require('../middleware/auth')
 
 const {createUser,loginUser,getUser,profileUpdate}=require("../controller/userController")
 const {createProduct,getProductById, getbyquery, updateProduct, deleteProductById} =require("../controller/productController")
-const {createCart} =  require('../controller/cartController')
+const {createCart,getByUserId,cartDelete} =  require('../controller/cartController')
 
 
 //=======================user API==================================
@@ -31,6 +31,12 @@ router.delete('/products/:productId', deleteProductById)
 //===================cartApi=======================================
 
 router.post("/users/:userId/cart", createCart)
+
+router.get('/users/:userId/cart', getByUserId)
+
+router.delete('/users/:userId/cart', cartDelete)
+
+
 
 
 
