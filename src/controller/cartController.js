@@ -31,46 +31,56 @@ const createCart = async function (req, res) {
     const checkProduct = await productModel.findOne({ _id: productId, isDeleted: false })
     if (!checkProduct)
         return res.status(400).send({ status: false, message: "product not found" })
+    
+        if (cartId) {
+            var findCart = await cartModel.findOne({ _id: cartId })
+            
+            if (!findCart)
+                return res.status(404).send({ status: false, message: "Cart does not exists" })
+        }
 
     const checkCart = await cartModel.findOne({ userId: userId })
 
-    if (!checkCart) {
+    if (!checkCart && findCart) {
+        return res.status(403).send({ status: false, message:'Cart does not belong to the user'})
+    }
+
+    if (checkCart) {
         if (cartId) {
-            return res.status(400).send({ status: false, message: "First You have to create cart!" })
+            if (checkCart._id.toString() != cartId)
+                return res.status(403).send({ status: false, message:"Cart does not belong to you " })
         }
-
-        let objCart = { userId: userId, items: [{ productId: productId, quantity: quantity }], totalPrice: (checkProduct.price * quantity), totalItems: 1 }
-        console.log(objCart)
-
-        let newCart = await cartModel.create(objCart)
-        return res.status(201).send({ status: true, message: "cart created successfully", data: newCart })
-    }
-    else {
-        if (!(cartId.match(/^[0-9a-fA-F]{24}$/)))
-            return res.status(400).send({ status: false, message: "Invalid cartId given" })
-
-        let checkCartId = await cartModel.findById(cartId)
-        if (!checkCartId)
-            return res.status(400).send({ status: false, message: "cartId not found" })
-
-        let productcheck = await productModel.findOne({ _id: productId, isDeleted: false })
-
-        let qty = checkCartId.items
+    //for existing product
+        let qty = checkCart.items
+        let uptotal = (checkCart.totalPrice + (checkProduct.price * Number(quantity))).toFixed(2)
         for (let i = 0; i < qty.length; i++) {
-            if (productcheck._id == productId) {
+            let prod_itemId = qty[i].productId.toString()
+            if (checkProduct._id.toString() == prod_itemId) {
                 let oldQty = qty[i].quantity
-                console.log(oldQty)
                 let newqty = oldQty + quantity
-                console.log(newqty)
-                let objCart1 = { userId: userId, items: [{ productId: productId, quantity: newqty }], totalPrice: (checkProduct.price * newqty), totalItems: qty.length }
-                console.log(objCart1)
-                let printQty = await cartModel.findOneAndUpdate({ _id: cartId }, objCart1, { new: true })
-                return res.status(201).send({ status: true, message: "cart created successfully", data: printQty })
-
-
-            }
+                qty[i].quantity = newqty
+                checkCart.totalPrice = uptotal
+                await checkCart.save();
+                // let existProd = await cartModel.findOneAndUpdate({_id:cartId},checkCart,{new:true})
+            
+                return res.status(201).send({ status: true, message: "Exist product update successfully", data: checkCart })
+                }
         }
+        //for new product in existing cart
+        checkCart.items.push({ productId: productId, quantity: Number(quantity) })
+        let total = (checkCart.totalPrice + (checkProduct.price * Number(quantity))).toFixed(2)
+        checkCart.totalPrice = total
+        let count = checkCart.totalItems
+        checkCart.totalItems = count + 1
+        await checkCart.save()
+        return res.status(201).send({ status: true, message: 'Success', data: checkCart })
     }
+    //for new cart 
+    let objCart = { userId: userId, items: [{ productId: productId, quantity: quantity }], totalPrice: (checkProduct.price * quantity)}
+    objCart['totalItems'] = objCart.items.length
+
+    let newCart = await cartModel.create(objCart)
+    return res.status(201).send({ status: true, message: "cart created successfully", data: newCart })
 }
 
 // ==================getByUserId==============
