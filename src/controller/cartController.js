@@ -2,6 +2,7 @@ const cartModel = require('../Model/cartModel')
 const userModel = require('../Model/userModel')
 const productModel = require('../Model/productModel')
 const { checkBody } = require('../validation/validation')
+const { removeAllListeners } = require('../Model/userModel')
 
 
 const createCart = async function (req, res) {
@@ -82,7 +83,58 @@ const createCart = async function (req, res) {
     let newCart = await cartModel.create(objCart)
     return res.status(201).send({ status: true, message: "cart created successfully", data: newCart })
 }
+//update cart =============================
 
+const updatecart = async function(req,res){
+const userId = req.params.userId 
+let data = req.body
+ 
+if(!(userId.match(/^[0-9a-fA-F]{24}$/))){
+    return res.status(400).send({status : false , message : "Please use a valid Object id"})
+}
+
+let usercheck1 = await userModel.findOne({_id:userId})
+if(!usercheck1){
+    return res.status(400).send({status : false , message : "User not found"})
+}
+
+if (!checkBody(data))
+return res.status(400).send({ status: false, message: "Enter data to create cart" })
+
+let {cartId , RemoveProduct , productId  } = data
+
+if(!(productId.match(/^[0-9a-fA-F]{24}$/))){
+ return res.status(400).send({status : false , message : "Please use a valid product id"})
+}
+
+let product1 = await productModel.findOne({_id:productId , isDeleted:false})
+
+if(!product1){
+    return res.status(400).send({status : false , message : "No any product found"})
+}
+
+if(!(cartId.match(/^[0-9a-fA-F]{24}$/))){
+return res.status(400).send({status : false , message : "Please use valid cardId "})
+}
+
+let cart1 = await cartModel.findOne({_id:cartId , userId : userId})
+
+if(!cart1){
+    return res.status(400).send({status : false , message : "No any cart found "})
+}
+
+if(!RemoveProduct){
+    return res.status(400).send({status : false , message :"remove product is required"})
+}
+
+if(RemoveProduct != 0 && RemoveProduct != 1){
+    return res.status(400).send({status : false , message : "Remove product only contain 0 or 1"})
+}
+
+
+
+
+}
 // ==================getByUserId==============
 
 const getByUserId= async function (req,res){
@@ -119,4 +171,4 @@ const cartDelete= async function (req,res){
 }
 
 
-module.exports = { createCart,getByUserId,cartDelete }
+module.exports = { createCart,getByUserId,cartDelete,updatecart }

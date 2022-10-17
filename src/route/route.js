@@ -5,7 +5,7 @@ const {authentication, authorization} = require('../middleware/auth')
 
 const {createUser,loginUser,getUser,profileUpdate}=require("../controller/userController")
 const {createProduct,getProductById, getbyquery, updateProduct, deleteProductById} =require("../controller/productController")
-const {createCart,getByUserId,cartDelete} =  require('../controller/cartController')
+const {createCart,getByUserId,cartDelete,updatecart} =  require('../controller/cartController')
 
 
 //=======================user API==================================
