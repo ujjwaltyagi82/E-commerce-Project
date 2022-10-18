@@ -130,6 +130,32 @@ if(!RemoveProduct){
 if(RemoveProduct != 0 && RemoveProduct != 1){
     return res.status(400).send({status : false , message : "Remove product only contain 0 or 1"})
 }
+if(RemoveProduct==1){
+
+    let qty = cart1.items
+        let uptotal = (cart1.totalPrice + (product1.price * Number(quantity))).toFixed(2)
+        for (let i = 0; i < qty.length; i++) {
+            let prod_itemId = qty[i].productId.toString()
+            if (product1._id.toString() == prod_itemId) {
+                let oldQty = qty[i].quantity
+                let newqty = oldQty -  quantity
+                qty[i].quantity = newqty
+                cart1.totalPrice = uptotal
+                await cart1.save();
+                // let existProd = await cartModel.findOneAndUpdate({_id:cartId},checkCart,{new:true})
+            
+                return res.status(201).send({ status: true, message: "Exist product update successfully", data: cart1 })
+                }
+        }
+        cart1.items.push({ productId: productId, quantity: Number(quantity) })
+        let total = (cart1.totalPrice - (checkProduct.price * Number(quantity))).toFixed(2)
+        cart1.totalPrice = total
+        let count = cart1.totalItems
+        cart1.totalItems = count - 1
+        await cart1.save()
+        return res.status(201).send({ status: true, message: 'Success', data: cart1 })
+
+}
 
 
 

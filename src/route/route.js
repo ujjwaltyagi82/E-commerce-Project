@@ -36,6 +36,7 @@ router.get('/users/:userId/cart', getByUserId)
 
 router.delete('/users/:userId/cart', cartDelete)
 
+router.put('/users/:userId/cart', updatecart)
 
 
 
