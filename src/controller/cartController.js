@@ -181,9 +181,13 @@ catch (err) {
 const getByUserId= async function (req,res){
     try{
         const userId=req.params.userId
+
+    if(!(userId.match(/^[0-9a-fA-F]{24}$/))){
+        res.status(400).send({status : false , message : "Please use a valid Object id"})
+    }
     let user=await userModel.findOne({_id:userId})
     if(!user){
-        return res.status(400).send({status:false , message:"please use userId"})
+        return res.status(400).send({status:false , message:"Userid is not present"})
     }
     let cart=await cartModel.findOne({userId:userId}).populate({path:'items.productId',select:{title:1,price:1,availableSizes:1}})
     if(!cart){
@@ -202,13 +206,16 @@ catch (err) {
 const cartDelete= async function (req,res){
  try{   const userId=req.params.userId
 
+    if(!(userId.match(/^[0-9a-fA-F]{24}$/))){
+        res.status(400).send({status : false , message : "Please use a valid Object id"})
+    }
     let user=await userModel.findOne({_id:userId})
     if(!user){
         return res.status(400).send({status:false , message:"please use userId"})
     }
     let cart=await cartModel.findOne({userId:userId})
     if(!cart){
-        return res.status(400).send({status:false , message:"dont find any product in cart"})
+        return res.status(400).send({status:false , message:"can't find cart for this user"})
     }
 
     let deleteCart=await cartModel.findOneAndUpdate({userId:userId},{totalItems:0,totalPrice:0,items:[]},{new:true})
