@@ -2,7 +2,6 @@ const cartModel = require('../Model/cartModel')
 const userModel = require('../Model/userModel')
 const productModel = require('../Model/productModel')
 const { checkBody } = require('../validation/validation')
-const { removeAllListeners } = require('../Model/userModel')
 
 
 const createCart = async function (req, res) {

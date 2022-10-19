@@ -1,6 +1,6 @@
 const userModel = require("../Model/userModel")
 const { uploadFile } = require("../controller/aws")
-// const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken')
 
 

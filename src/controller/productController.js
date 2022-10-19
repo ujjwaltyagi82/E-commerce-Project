@@ -1,7 +1,7 @@
 const productModel = require("../Model/productModel")
 const { uploadFile } = require("../controller/aws")
 const { isValidBody, numRegex, inrRegex, useRegex, isValidImage, checkBody } = require('../validation/validation.js')
-// const { findOneAndUpdate } = require("../Model/productModel")
+
 
 
 //====================createProduct==========================================================

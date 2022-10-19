@@ -30,13 +30,13 @@ router.delete('/products/:productId', deleteProductById)
 
 //===================cartApi=======================================
 
-router.post("/users/:userId/cart", createCart)
+router.post("/users/:userId/cart",authentication, authorization, createCart)
 
-router.get('/users/:userId/cart', getByUserId)
+router.get('/users/:userId/cart',authentication, authorization, getByUserId)
 
-router.delete('/users/:userId/cart', cartDelete)
+router.delete('/users/:userId/cart',authentication, authorization, cartDelete)
 
-router.put('/users/:userId/cart', updatecart)
+router.put('/users/:userId/cart',authentication, authorization, updatecart)
 
 
 
