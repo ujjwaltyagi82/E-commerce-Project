@@ -94,7 +94,7 @@ const createCart = async function (req, res) {
 const updatecart = async function(req,res){
 try{
     const userId = req.params.userId 
-let data = req.body
+    let data = req.body
  
 if(!(userId.match(/^[0-9a-fA-F]{24}$/))){
     return res.status(400).send({status : false , message : "Please use a valid Object id"})
@@ -222,7 +222,7 @@ const cartDelete= async function (req,res){
 
     let deleteCart=await cartModel.findOneAndUpdate({userId:userId},{totalItems:0,totalPrice:0,items:[]},{new:true})
     if(deleteCart){
-    return res.status(204).send({status:true , message:"cart deleted"})
+    return res.status(200).send({status:true , message:"cart deleted"})
     }
     return res.status(200).send({status:true , message:"cart not found or cart deleted"})
 }

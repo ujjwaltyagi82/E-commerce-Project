@@ -284,7 +284,7 @@ const updateUser = async function (req, res, next) {
     }
     if (address) {
       data.address = JSON.parse(address);
-    }
+    
     if (!isValidBody(data.address)) {
       return res.status(400).send({ status: false, message: "Please enter a valid address" })
     }
@@ -331,6 +331,7 @@ const updateUser = async function (req, res, next) {
     if (!pinValid(billing.pincode)) {
       return res.status(400).send({ status: false, message: "Please enter valid pincode in billing address" })
     }
+  }
   }
   catch (err) {
     return res.status(500).send({ status: false, message: err.message })
