@@ -6,7 +6,7 @@ const { isValidBody, isValidStatus } = require('../validation/validation.js');
 
 
 const createOrder = async function(req,res){
-
+try{
     let userId = req.params.userId
     if (!userId) {
         return res.status(400).send({ status: false, message: "User ID is Required" });
@@ -76,7 +76,9 @@ const createOrder = async function(req,res){
 
     return res.status(201).send({ status: true, message: "Success", data: result })
 
-
+}catch(err){
+    return res.status(500).send({status:false, message:err.message})
+}
 }
 
 const updateOrder = async function(req,res){

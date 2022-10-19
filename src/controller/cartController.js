@@ -56,7 +56,9 @@ const createCart = async function (req, res) {
         let uptotal = (checkCart.totalPrice + (checkProduct.price * Number(quantity))).toFixed(2)
         for (let i = 0; i < qty.length; i++) {
             let prod_itemId = qty[i].productId.toString()
+
             if (checkProduct._id.toString() == prod_itemId) {
+
                 let oldQty = qty[i].quantity
                 let newqty = oldQty + quantity
                 qty[i].quantity = newqty
@@ -219,7 +221,10 @@ const cartDelete= async function (req,res){
     }
 
     let deleteCart=await cartModel.findOneAndUpdate({userId:userId},{totalItems:0,totalPrice:0,items:[]},{new:true})
-    return res.status(200).send({status:true , message:"cart deleted", data:deleteCart})
+    if(deleteCart){
+    return res.status(204).send({status:true , message:"cart deleted"})
+    }
+    return res.status(200).send({status:true , message:"cart not found or cart deleted"})
 }
 catch (err) {
     return res.status(500).send({ status: false, message: err.message })
