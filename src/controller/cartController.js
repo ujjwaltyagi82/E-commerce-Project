@@ -5,6 +5,7 @@ const { checkBody } = require('../validation/validation')
 
 
 const createCart = async function (req, res) {
+  try{  
     const userId = req.params.userId
     const data = req.body
 
@@ -81,11 +82,16 @@ const createCart = async function (req, res) {
 
     let newCart = await cartModel.create(objCart)
     return res.status(201).send({ status: true, message: "cart created successfully", data: newCart })
+    }
+    catch (err) {
+        return res.status(500).send({ status: false, message: err.message })
+}
 }
 //update cart =============================
 
 const updatecart = async function(req,res){
-const userId = req.params.userId 
+try{
+    const userId = req.params.userId 
 let data = req.body
  
 if(!(userId.match(/^[0-9a-fA-F]{24}$/))){
@@ -160,7 +166,10 @@ for (let i = 0; i < items1.length; i++) {
         }
         return res.status(404).send({status:false, message:'Product not found or product deleted'})
        
-
+}
+catch (err) {
+    return res.status(500).send({ status: false, message: err.message })
+}
 }
 
 
@@ -170,7 +179,8 @@ for (let i = 0; i < items1.length; i++) {
 // ==================getByUserId==============
 
 const getByUserId= async function (req,res){
-    const userId=req.params.userId
+    try{
+        const userId=req.params.userId
     let user=await userModel.findOne({_id:userId})
     if(!user){
         return res.status(400).send({status:false , message:"please use userId"})
@@ -180,13 +190,17 @@ const getByUserId= async function (req,res){
         return res.status(400).send({status:false , message:"dont find any product in cart"})
     }
     return res.status(200).send({status:true , message:"cart find", data:cart})
+}
+catch (err) {
+    return res.status(500).send({ status: false, message: err.message })
 
+}
 }
 
 // ===============deletecart======
 
 const cartDelete= async function (req,res){
-    const userId=req.params.userId
+ try{   const userId=req.params.userId
 
     let user=await userModel.findOne({_id:userId})
     if(!user){
@@ -199,7 +213,10 @@ const cartDelete= async function (req,res){
 
     let deleteCart=await cartModel.findOneAndUpdate({userId:userId},{totalItems:0,totalPrice:0,items:[]},{new:true})
     return res.status(200).send({status:true , message:"cart deleted", data:deleteCart})
-
+}
+catch (err) {
+    return res.status(500).send({ status: false, message: err.message })
+}
 }
 
 
