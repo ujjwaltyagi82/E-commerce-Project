@@ -6,6 +6,7 @@ const {authentication, authorization} = require('../middleware/auth')
 const {createUser,loginUser,getUser,profileUpdate}=require("../controller/userController")
 const {createProduct,getProductById, getbyquery, updateProduct, deleteProductById} =require("../controller/productController")
 const {createCart,getByUserId,cartDelete,updatecart} =  require('../controller/cartController')
+const {createOrder} = require('../controller/OrderController')
 
 
 //=======================user API==================================
@@ -37,6 +38,10 @@ router.get('/users/:userId/cart',authentication, authorization, getByUserId)
 router.delete('/users/:userId/cart',authentication, authorization, cartDelete)
 
 router.put('/users/:userId/cart',authentication, authorization, updatecart)
+
+//=============================Order Api==================================
+
+router.post("/users/:userId/orders", authentication, authorization, createOrder)
 
 
 

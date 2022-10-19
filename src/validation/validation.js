@@ -75,6 +75,9 @@ function numRegex(input) {
   return regex.test(input);
 }
 
+ function isValidStatus(status){
+  return ['pending', 'completed', 'cancelled'].includes(status);
+}
 //======================================User registration validation====================================================
 const registerValidtion = async function (req, res, next) {
   try {
@@ -393,4 +396,4 @@ const productValidation = async function (req, res, next) {
 
 }
 
-module.exports = { registerValidtion,numRegex, updateUser, isValidBody, inrRegex, useRegex, isValidImage, checkBody, productValidation}
+module.exports = { registerValidtion,numRegex, updateUser, isValidBody, inrRegex, useRegex, isValidStatus, isValidImage, checkBody, productValidation}
