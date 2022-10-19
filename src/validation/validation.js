@@ -12,6 +12,9 @@ const isValidBody = function (value) {
   if (typeof value === "string" && value.trim().length === 0) return false;
   return true;
 };
+const isValidRequestBody = function (requestBody) {
+  return Object.keys(requestBody).length > 0;
+};
 
 const isValidEmail = function (email) {
   let checkemail = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
@@ -397,4 +400,4 @@ const productValidation = async function (req, res, next) {
 
 }
 
-module.exports = { registerValidtion,numRegex, updateUser, isValidBody, inrRegex, useRegex, isValidStatus, isValidImage, checkBody, productValidation}
+module.exports = { registerValidtion,numRegex, updateUser, isValidBody, inrRegex, useRegex, isValidStatus, isValidImage, checkBody, productValidation,isValidRequestBody}
