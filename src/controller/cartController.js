@@ -53,7 +53,7 @@ const createCart = async function (req, res) {
         }
     //for existing product
         let qty = checkCart.items
-        let uptotal = (checkCart.totalPrice + (checkProduct.price * Number(quantity))).toFixed(2)
+        let uptotal = (checkCart.totalPrice + (checkProduct.price * (quantity))).toFixed(2)
         for (let i = 0; i < qty.length; i++) {
             let prod_itemId = qty[i].productId.toString()
 
@@ -70,8 +70,8 @@ const createCart = async function (req, res) {
                 }
         }
         //for new product in existing cart
-        checkCart.items.push({ productId: productId, quantity: Number(quantity) })
-        let total = (checkCart.totalPrice + (checkProduct.price * Number(quantity))).toFixed(2)
+        checkCart.items.push({ productId: productId, quantity: (quantity) })
+        let total = (checkCart.totalPrice + (checkProduct.price * (quantity))).toFixed(2)
         checkCart.totalPrice = total
         let count = checkCart.totalItems
         checkCart.totalItems = count + 1
