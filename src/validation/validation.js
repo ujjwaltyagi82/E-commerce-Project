@@ -3,8 +3,7 @@ const userModel = require("../Model/userModel")
 
 // Validataion for empty request body
 const checkBody = function (value) {
-  if (Object.keys(value).length === 0) return false;
-  else return true;
+  return Object.keys(value).length > 0;
 };
 
 const isValidBody = function (value) {
@@ -88,6 +87,10 @@ const registerValidtion = async function (req, res, next) {
     let { fname, lname, email, phone, password, address } = data
     let profileImage = req.files
 
+    if (!checkBody(data) && !profileImage) {
+      return res.status(400).send({ status: false, message: "Please input Parameters" })
+    }
+
     if (profileImage.length === 0) {
       return res.status(400).send({ status: false, message: "Please Upload the Profile Image" })
     }
@@ -96,9 +99,7 @@ const registerValidtion = async function (req, res, next) {
       return res.status(400).send({ status: false, message: "Please upload only image file with extension jpg, png, gif, jpeg" })
     }
 
-    if (!checkBody(data) && !profileImage) {
-      return res.status(400).send({ status: false, message: "Please input Parameters" })
-    }
+    
 
     if (!isValidBody(fname)) {
       return res.status(400).send({ status: false, message: "Please provide first name" })
@@ -348,6 +349,9 @@ const productValidation = async function (req, res, next) {
   try {
     let data = req.body
     let { availableSizes, currencyId, currencyFormat, title, description, style, price } = data
+
+    if (!checkBody(data)) 
+      return res.status(400).send({ status: false, message: "Please input Parameters" })
 
     if (!isValidBody(title))
       return res.status(400).send({ status: false, message: 'Title is required' })

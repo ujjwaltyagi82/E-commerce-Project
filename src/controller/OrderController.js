@@ -9,6 +9,15 @@ const userModel = require('../Model/userModel.js');
 const createOrder = async function (req, res) {
     try {
         let userId = req.params.userId
+
+        let data = req.body
+
+        let { cartId, status, cancellable } = data
+        
+        if (!isValidRequestBody(data)) {
+            return res.status(400).send({ status: false, message: "Please input Parameters" })
+          }
+
         if (!userId) {
             return res.status(400).send({ status: false, message: "User ID is Required" });
         }
@@ -22,9 +31,7 @@ const createOrder = async function (req, res) {
         if (!checkuser) {
             return res.status(400).send({ status: false, message: "User not found" })
         }
-        let data = req.body
-
-        let { cartId, status, cancellable } = data
+      
 
         if (!cartId)
             return res.status(400).send({ status: false, message: "Cart ID is required" })
@@ -92,6 +99,10 @@ const updateOrder = async function (req, res) {
         let userId = req.params.userId
         const data = req.body
         let orderId = data.orderId
+
+        if (!isValidRequestBody(data)) {
+            return res.status(400).send({ status: false, message: "Please input Parameters" })
+          }
 
         if (!(userId.match(/^[0-9a-fA-F]{24}$/))) {
             return res.status(400).send({ status: false, message: "Please use a valid Object id" })
