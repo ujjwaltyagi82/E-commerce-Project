@@ -66,7 +66,7 @@ const createCart = async function (req, res) {
                 await checkCart.save();
                 // let existProd = await cartModel.findOneAndUpdate({_id:cartId},checkCart,{new:true})
             
-                return res.status(201).send({ status: true, message: "Exist product update successfully", data: checkCart })
+                return res.status(201).send({ status: true, message: "Success", data: checkCart })
                 }
         }
         //for new product in existing cart
@@ -83,7 +83,7 @@ const createCart = async function (req, res) {
     objCart['totalItems'] = objCart.items.length
 
     let newCart = await cartModel.create(objCart)
-    return res.status(201).send({ status: true, message: "cart created successfully", data: newCart })
+    return res.status(201).send({ status: true, message: "Success", data: newCart })
     }
     catch (err) {
         return res.status(500).send({ status: false, message: err.message })
@@ -108,7 +108,7 @@ if(!usercheck1){
 if (!checkBody(data))
 return res.status(400).send({ status: false, message: "Enter data to create cart" })
 
-let {cartId , RemoveProduct , productId  } = data
+let {cartId , removeProduct , productId  } = data
 
 if(!(productId.match(/^[0-9a-fA-F]{24}$/))){
  return res.status(400).send({status : false , message : "Please use a valid product id"})
@@ -130,11 +130,11 @@ if(!cart1){
     return res.status(400).send({status : false , message : "No any cart found "})
 }
 
-if(!RemoveProduct){
+if(!removeProduct){
     return res.status(400).send({status : false , message :"remove product is required"})
 }
 
-if(RemoveProduct != 0 && RemoveProduct != 1){
+if(removeProduct != 0 && removeProduct != 1){
     return res.status(400).send({status : false , message : "Remove product only contain 0 or 1"})
 }
 
@@ -144,7 +144,7 @@ for (let i = 0; i < items1.length; i++) {
     
     if (product1._id.toString() == prod_itemId) {
         let oldQty = items1[i].quantity
-            if(RemoveProduct==1 && oldQty>1){
+            if(removeProduct==1 && oldQty>1){
            
             let uptotal = cart1.totalPrice - product1.price 
             let newqty = oldQty - 1
@@ -153,14 +153,14 @@ for (let i = 0; i < items1.length; i++) {
             await cart1.save();
                 // let existProd = await cartModel.findOneAndUpdate({_id:cartId},checkCart,{new:true})
             
-                return res.status(200).send({ status: true, message: "Exist product update successfully", data: cart1 })
+                return res.status(200).send({ status: true, message: "Success", data: cart1 })
                 }
                 let total = (cart1.totalPrice - (product1.price*cart1.items[i].quantity))
                 cart1.totalPrice=total
                 cart1.items.pop(items1[i])
                 cart1.totalItems= cart1.items.length
                 await cart1.save()
-                return res.status(200).send({ status: true, message: "Exist product delete successfully", data: cart1 })
+                return res.status(200).send({ status: true, message: "Success", data: cart1 })
             }
            
 
@@ -195,7 +195,7 @@ const getByUserId= async function (req,res){
     if(!cart){
         return res.status(400).send({status:false , message:"dont find any product in cart"})
     }
-    return res.status(200).send({status:true , message:"cart find", data:cart})
+    return res.status(200).send({status:true , message:"Success", data:cart})
 }
 catch (err) {
     return res.status(500).send({ status: false, message: err.message })
@@ -221,10 +221,9 @@ const cartDelete= async function (req,res){
     }
 
     let deleteCart=await cartModel.findOneAndUpdate({userId:userId},{totalItems:0,totalPrice:0,items:[]},{new:true})
-    if(deleteCart){
-    return res.status(200).send({status:true , message:"cart deleted"})
-    }
-    return res.status(200).send({status:true , message:"cart not found or cart deleted"})
+    
+    return res.status(204).send({status:true , message:"cart deleted"})
+    
 }
 catch (err) {
     return res.status(500).send({ status: false, message: err.message })

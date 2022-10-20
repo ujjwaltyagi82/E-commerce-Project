@@ -19,7 +19,7 @@ const createProduct = async function (req, res) {
 
     const product = await productModel.create(data)
 
-    return res.status(201).send({ status: true, message: "product created successfully", data: product })
+    return res.status(201).send({ status: true, message: "Success", data: product })
 
   }
   catch (err) {
@@ -42,7 +42,7 @@ const getbyquery = async function (req, res) {
       if (!check) {
         return res.status(400).send({ status: false, message: "No product found" })
       }
-      return res.status(200).send({ status: true, message: "Product found succesfully", data: check })
+      return res.status(200).send({ status: true, message: "Success", data: check })
     }
     else {
 
@@ -95,7 +95,7 @@ const getbyquery = async function (req, res) {
         return res.status(400).send({ status: false, message: "No any product find" })
       }
 
-      return res.status(200).send({ status: true, message: "product found", data: listproduct })
+      return res.status(200).send({ status: true, message: "Success", data: listproduct })
     }
 
   }
