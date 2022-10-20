@@ -1,7 +1,5 @@
 const mongoose = require("mongoose")
 
-
-
 const poductSchema = new mongoose.Schema({
 
     title: {

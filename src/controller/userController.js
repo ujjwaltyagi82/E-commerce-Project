@@ -102,7 +102,7 @@ const getUser = async function (req, res) {
 
 }
 
-//------------------profile update-----------------
+//------------------profile update-----------------//
 
 const profileUpdate = async function (req, res) {
   try {
@@ -111,7 +111,7 @@ const profileUpdate = async function (req, res) {
     let profileImage=req.files
 
     let {  password } = data
-    
+
     if (password)
       data.password = await bcrypt.hash(password, 10)
 
