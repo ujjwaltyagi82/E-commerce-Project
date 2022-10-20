@@ -43,7 +43,7 @@ router.put('/users/:userId/cart',authentication, authorization, updatecart)
 
 router.post("/users/:userId/orders", authentication, authorization, createOrder)
 
-router.put("/users/:userId/orders", authentication, authorization, createOrder)
+router.put("/users/:userId/orders", authentication, authorization, updateOrder)
 
 
 

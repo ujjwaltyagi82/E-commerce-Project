@@ -146,8 +146,8 @@ const updateOrder = async function (req, res) {
             return res.status(400).send({ status: false, message: "your order is already completed" })
         }
 
-        if (orderid.status == "pending") {
-            return res.status(400).send({ status: false, message: "Your order is already in pending" })
+        if(orderid.status == data.status){
+            return res.status(400).send({ status: false, message: "your order is already pending" })
         }
 
 
