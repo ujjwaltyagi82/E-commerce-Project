@@ -43,7 +43,7 @@ const createOrder = async function (req, res) {
 
         if (status || typeof status == "string") {
             //checking if the status is valid
-            if (isValidBody(status)) {
+            if (!isValidBody(status)) {
                 return res.status(400).send({ status: false, message: " Please provide status" })
             }
             if (!isValidStatus(status))
@@ -51,7 +51,7 @@ const createOrder = async function (req, res) {
         }
 
         if (cancellable || typeof cancellable == 'string') {
-            if (validate.isValid(cancellable))
+            if (!isValidBody(cancellable))
                 return res.status(400).send({ status: false, message: "cancellable should not contain white spaces" });
             if (typeof cancellable == 'string') {
                 //converting it to lowercase and removing white spaces
