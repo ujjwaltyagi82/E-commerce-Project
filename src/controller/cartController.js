@@ -151,7 +151,6 @@ for (let i = 0; i < items1.length; i++) {
             items1[i].quantity = newqty
             cart1.totalPrice = uptotal
             await cart1.save();
-                // let existProd = await cartModel.findOneAndUpdate({_id:cartId},checkCart,{new:true})
             
                 return res.status(200).send({ status: true, message: "Success", data: cart1 })
                 }
@@ -178,7 +177,7 @@ catch (err) {
 
 
 
-// ==================getByUserId==============
+// ==================getByUserId=============================================================
 
 const getByUserId= async function (req,res){
     try{
